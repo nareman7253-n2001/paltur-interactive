@@ -27,7 +27,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import { useContent, getLocalizedText } from "@/lib/content-context";
 import { useAuth } from "@workspace/replit-auth-web";
 import {
@@ -40,6 +40,7 @@ export default function Dashboard() {
   const { t, isRtl, lang } = useI18n();
   const { content } = useContent();
   const { isAuthenticated, login, user } = useAuth();
+  const { toast } = useToast();
   const [reportType, setReportType] = useState("");
   const [reportLocation, setReportLocation] = useState("");
   const [reportDetails, setReportDetails] = useState("");
@@ -67,7 +68,7 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
-        toast.success(lang === "ar" ? "تم إرسال البلاغ بنجاح وتنبيه غرفة العمليات" : "Report successfully submitted and operational room alerted");
+        toast({ title: lang === "ar" ? "تم إرسال البلاغ بنجاح" : "Report submitted successfully", description: lang === "ar" ? "تم تنبيه غرفة العمليات." : "The operations room has been notified." });
         setReportType("");
         setReportLocation("");
         setReportDetails("");
@@ -75,7 +76,7 @@ export default function Dashboard() {
         throw new Error("Failed to submit");
       }
     } catch (error) {
-      toast.error(lang === "ar" ? "فشل إرسال البلاغ، يرجى المحاولة لاحقاً" : "Failed to submit report, please try again later");
+      toast({ variant: "destructive", title: lang === "ar" ? "تعذر إرسال البلاغ" : "Unable to submit report", description: lang === "ar" ? "يرجى المحاولة لاحقاً." : "Please try again later." });
     } finally {
       setIsSubmitting(false);
     }
@@ -161,7 +162,7 @@ export default function Dashboard() {
             </p>
           </div>
           {!isAuthenticated && (
-            <Button size="lg" onClick={login} className="gap-2 shadow-lg hover:shadow-xl transition-all">
+            <Button size="lg" onClick={() => { void login() }} className="gap-2 shadow-lg hover:shadow-xl transition-all">
               <LogIn className="size-5" />
               {lang === "ar" ? "تسجيل الدخول للمنصة" : "Sign In to Platform"}
             </Button>

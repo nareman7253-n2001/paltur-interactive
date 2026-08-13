@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -180,7 +181,7 @@ export default function ContentManagerPage() {
             <CardHeader><CardTitle>{t("Admin access required", "يلزم تسجيل دخول المدير")}</CardTitle></CardHeader>
             <CardContent>
               <p className="mb-5 text-sm text-muted-foreground">{t("Sign in to edit platform content.", "سجّل الدخول لتعديل محتوى المنصة.")}</p>
-              <Button onClick={login}>{t("Sign in", "تسجيل الدخول")}</Button>
+              <Button onClick={() => { void login() }}>{t("Sign in", "تسجيل الدخول")}</Button>
             </CardContent>
           </Card>
         </div>
@@ -410,7 +411,7 @@ export default function ContentManagerPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full flex items-center justify-center bg-muted/20 rounded-xl border border-dashed p-4">
-                      <ResponsiveContainer width="1005" height="100%">
+                      <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={[
                           { name: 'السبت', reports: 12 },
                           { name: 'الأحد', reports: 19 },

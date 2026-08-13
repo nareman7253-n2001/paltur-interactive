@@ -176,7 +176,7 @@ export function Sidebar({
         )}
         {!authLoading && (
           <button
-            onClick={isAuthenticated ? logout : login}
+            onClick={() => { void (isAuthenticated ? logout() : login()) }}
             className={cn(
               "w-full mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors text-white bg-sidebar-accent/80 hover:bg-sidebar-accent",
               isRtl && "flex-row-reverse"

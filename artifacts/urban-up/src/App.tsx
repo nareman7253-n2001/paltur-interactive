@@ -34,6 +34,7 @@ import { LoginPage } from '@/pages/Login';
 
 import { I18nProvider } from '@/lib/i18n-context';
 import { ThemeProvider } from '@/lib/theme-context';
+import { ContentProvider } from '@/lib/content-context';
 import { Chatbot } from '@/components/Chatbot';
 
 const queryClient = new QueryClient();
@@ -64,17 +65,19 @@ function Router() {
 function App() {
   return (
     <ThemeProvider>
-      <I18nProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-              <Router />
-              <Chatbot />
-            </WouterRouter>
-            <Toaster />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </I18nProvider>
+      <ContentProvider>
+        <I18nProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+                <Router />
+                <Chatbot />
+              </WouterRouter>
+              <Toaster />
+            </TooltipProvider>
+          </QueryClientProvider>
+        </I18nProvider>
+      </ContentProvider>
     </ThemeProvider>
   );
 }

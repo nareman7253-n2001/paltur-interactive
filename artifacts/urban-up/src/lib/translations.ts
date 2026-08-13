@@ -1,6 +1,7 @@
 export type Lang = 'en' | 'ar';
+export type LocalizedTranslation = { en: string; ar: string };
 
-export const translations = {
+export const translations: Record<string, LocalizedTranslation> = {
   // ── Brand ───────────────────────────────────────────────
   appName:              { en: 'PalTur',               ar: 'بالتور' },
 
@@ -125,3 +126,9 @@ export const translations = {
   success:              { en: 'Success',                          ar: 'نجاح' },
   error:                { en: 'Error',                            ar: 'خطأ' },
 };
+
+export type TranslationKey = string;
+
+export function t(key: TranslationKey, lang: Lang): string {
+  return translations[key]?.[lang] ?? translations[key]?.en ?? key;
+}
