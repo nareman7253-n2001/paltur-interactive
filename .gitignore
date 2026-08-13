@@ -47,3 +47,10 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# ASP.NET Core build artefacts and local secrets
+**/bin/
+**/obj/
+appsettings.Development.json
+.env
+.env.*

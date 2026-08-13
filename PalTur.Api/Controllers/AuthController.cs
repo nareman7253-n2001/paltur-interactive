@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using PalTur.Api.Data;
 using PalTur.Api.Models;
 
@@ -37,11 +38,16 @@ namespace PalTur.Api.Controllers
                 return Unauthorized(new { message = "بيانات الدخول غير صحيحة" });
             }
 
-            // التحقق من كلمة المرور (أو مقارنة بسيطة إن لم تكن مشفرة في حال البيانات التجريبية)
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
-            if (result == PasswordVerificationResult.Failed && user.PasswordHash != dto.Password)
+            if (result == PasswordVerificationResult.Failed)
             {
                 return Unauthorized(new { message = "بيانات الدخول غير صحيحة" });
+            }
+
+            if (result == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                user.PasswordHash = _hasher.HashPassword(user, dto.Password);
+                await _ctx.SaveChangesAsync();
             }
 
             var token = GenerateJwtToken(user);

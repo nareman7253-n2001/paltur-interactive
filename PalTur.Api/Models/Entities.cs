@@ -226,7 +226,7 @@ namespace PalTur.Api.Models
         public string Category { get; set; } = "";
         public string Description { get; set; } = "";
         public string DescriptionAr { get; set; } = "";
-        public DateTime CreatedAt { get: set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public User User { get; set; } = null!;
     }
