@@ -4,27 +4,18 @@ import {
   LayoutDashboard,
   Navigation,
   Map as MapIcon,
-  Leaf,
-  Wallet,
   Building2,
-  ShoppingBag,
-  CalendarDays,
-  LogIn,
-  LogOut,
-  Trees,
-  Compass,
   TrendingUp,
   AlertCircle,
-  Fuel,
-  Star,
-  MessageSquare,
-  BarChart3,
   Heart,
   BookOpen,
   TriangleAlert,
   PanelLeftClose,
   PanelRightClose,
   Settings2,
+  BarChart3,
+  LogIn,
+  LogOut,
 } from "lucide-react"
 import { useGetProfile } from "@workspace/api-client-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -47,27 +38,17 @@ export function Sidebar({
   const { content } = useContent()
   const { isAuthenticated, user, login, logout, isLoading: authLoading } = useAuth()
 
+  // تم الاحتفاظ فقط بالمسارات الفعالة والرئيسية
   const cityControlLinks = [
     { href: "/dashboard",    label: lang === "ar" ? "لوحة التحكم"        : "Dashboard",       icon: LayoutDashboard },
     { href: "/traffic",      label: lang === "ar" ? "المرور والطرق"       : "Traffic & Routes", icon: Navigation },
     { href: "/safe-paths",   label: lang === "ar" ? "المسارات الآمنة"     : "Safe Paths",       icon: MapIcon },
-    { href: "/eco",          label: lang === "ar" ? "المكافآت البيئية"    : "Eco Rewards",      icon: Leaf },
-    { href: "/carbon",       label: lang === "ar" ? "البصمة الكربونية"    : "Carbon Footprint", icon: Trees },
     { href: "/municipality", label: lang === "ar" ? "البلدية"             : "Municipality",     icon: Building2 },
-  ]
-
-  const cityServiceLinks = [
-    { href: "/events",                label: lang === "ar" ? "الفعاليات"       : "Events",            icon: CalendarDays },
-    { href: "/tours",                 label: lang === "ar" ? "الجولات"         : "Community Tours",   icon: Compass },
-    { href: "/destination-of-month",  label: lang === "ar" ? "وجهة الشهر"      : "Dest. of Month",    icon: Star },
-    { href: "/wallet",                label: lang === "ar" ? "المحفظة"          : "Wallet",            icon: Wallet },
-    { href: "/store",                 label: lang === "ar" ? "متجر التراث"      : "Heritage Store",    icon: ShoppingBag },
   ]
 
   const communityLinks = [
     { href: "/suggestions", label: lang === "ar" ? "المقترحات"      : "Suggestions",  icon: TrendingUp },
     { href: "/complaints",  label: lang === "ar" ? "الشكاوى"        : "Complaints",   icon: AlertCircle },
-    { href: "/fuel",        label: lang === "ar" ? "مراقبة الوقود"  : "Fuel Intel",   icon: Fuel },
   ]
 
   const inclusivityLinks = [
@@ -114,7 +95,7 @@ export function Sidebar({
       )}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      {/* Sidebar toggle — attached to the outer edge of the sidebar */}
+      {/* Sidebar toggle */}
       <button
         onClick={onToggle}
         className={cn(
@@ -129,7 +110,6 @@ export function Sidebar({
 
       {/* Logo */}
       <div className={cn("flex items-center gap-3 px-6 py-4 font-bold text-2xl tracking-tight text-white shrink-0", isRtl && "flex-row-reverse")}>
-
         <div className="flex size-9 items-center justify-center overflow-hidden rounded-xl bg-primary shrink-0">
           {content.brand.logoUrl ? (
             <img src={content.brand.logoUrl} alt="" className="size-full object-cover" />
@@ -141,8 +121,7 @@ export function Sidebar({
       </div>
 
       {/* Scrollable nav area */}
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-3">
-        {/* City Control */}
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
         <div>
           <SectionLabel label={lang === "ar" ? "التحكم في المدينة" : "City Control"} />
           <nav className="flex flex-col gap-0.5">
@@ -150,15 +129,6 @@ export function Sidebar({
           </nav>
         </div>
 
-        {/* City Services */}
-        <div>
-          <SectionLabel label={lang === "ar" ? "خدمات المدينة" : "City Services"} />
-          <nav className="flex flex-col gap-0.5">
-            {cityServiceLinks.map((link) => <NavLink key={link.href} {...link} />)}
-          </nav>
-        </div>
-
-        {/* Community */}
         <div>
           <SectionLabel label={lang === "ar" ? "المجتمع" : "Community"} />
           <nav className="flex flex-col gap-0.5">
@@ -166,7 +136,6 @@ export function Sidebar({
           </nav>
         </div>
 
-        {/* Inclusivity */}
         <div>
           <SectionLabel label={lang === "ar" ? "الشمولية والإتاحة" : "Inclusivity"} />
           <nav className="flex flex-col gap-0.5">
@@ -174,7 +143,6 @@ export function Sidebar({
           </nav>
         </div>
 
-        {/* Administration */}
         <div>
           <SectionLabel label={lang === "ar" ? "الإدارة" : "Administration"} />
           <nav className="flex flex-col gap-0.5">
@@ -210,15 +178,14 @@ export function Sidebar({
           <button
             onClick={isAuthenticated ? logout : login}
             className={cn(
-              "w-full mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
-              isAuthenticated ? "text-red-400 hover:bg-sidebar-accent/50" : "text-primary hover:bg-sidebar-accent/50",
+              "w-full mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors text-white bg-sidebar-accent/80 hover:bg-sidebar-accent",
               isRtl && "flex-row-reverse"
             )}
           >
-            {isAuthenticated ? <LogOut className="size-3.5 shrink-0" /> : <LogIn className="size-3.5 shrink-0" />}
+            {isAuthenticated ? <LogOut className="size-3.5 shrink-0 text-white" /> : <LogIn className="size-3.5 shrink-0 text-white" />}
             {isAuthenticated
               ? (isRtl ? "تسجيل الخروج" : "Sign Out")
-              : (isRtl ? "تسجيل الدخول" : "Sign In with Replit")}
+              : (isRtl ? "تسجيل الدخول" : "Sign In")}
           </button>
         )}
       </div>
