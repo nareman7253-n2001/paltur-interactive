@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { AppLayout } from "@/components/layout/AppLayout";
 import {
@@ -38,7 +38,47 @@ import {
 export default function Dashboard() {
   const { t, isRtl, lang } = useI18n();
   const { content } = useContent();
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, user } = useAuth();
+  const [reportType, setReportType] = useState("");
+  const [reportLocation, setReportLocation] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      alert(lang === "ar" ? "يرجى تسجيل الدخول أولاً" : "Please login first");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/complaints', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: reportType,
+          location: reportLocation,
+          description: reportDetails,
+          category: 'quick_report',
+          userId: user?.id
+        })
+      });
+
+      if (response.ok) {
+        alert(lang === "ar" ? "تم إرسال البلاغ بنجاح" : "Report submitted successfully");
+        setReportType("");
+        setReportLocation("");
+        setReportDetails("");
+      } else {
+        throw new Error("Failed to submit");
+      }
+    } catch (error) {
+      alert(lang === "ar" ? "فشل إرسال البلاغ، يرجى المحاولة لاحقاً" : "Failed to submit report, please try again later");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const dashboardContent = content.dashboard;
 
   const { data: summaryData } = useGetDashboardSummary({
@@ -171,33 +211,50 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Interactive Form Placeholder */}
-            <Card className="border-none shadow-lg">
+            {/* Interactive Form */}
+            <Card className="border-none shadow-lg dark:bg-card/40">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{lang === "ar" ? "أرسل تقريراً سريراً" : "Quick Report Submission"}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{lang === "ar" ? "نوع البلاغ" : "Report Type"}</label>
-                    <Input placeholder={lang === "ar" ? "مثلاً: عائق في الطريق" : "e.g. Road Obstacle"} />
+              <CardContent>
+                <form onSubmit={handleReportSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">{lang === "ar" ? "نوع البلاغ" : "Report Type"}</label>
+                      <Input 
+                        value={reportType}
+                        onChange={(e) => setReportType(e.target.value)}
+                        placeholder={lang === "ar" ? "مثلاً: عائق في الطريق" : "e.g. Road Obstacle"} 
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">{lang === "ar" ? "الموقع" : "Location"}</label>
+                      <Input 
+                        value={reportLocation}
+                        onChange={(e) => setReportLocation(e.target.value)}
+                        placeholder={lang === "ar" ? "حدد الموقع التقريبي" : "Specify location"} 
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">{lang === "ar" ? "الموقع" : "Location"}</label>
-                    <Input placeholder={lang === "ar" ? "حدد الموقع التقريبي" : "Specify location"} />
+                    <label className="text-sm font-medium">{lang === "ar" ? "التفاصيل" : "Details"}</label>
+                    <textarea 
+                      value={reportDetails}
+                      onChange={(e) => setReportDetails(e.target.value)}
+                      className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      placeholder={lang === "ar" ? "اشرح ما تلاحظه هنا..." : "Describe what you see..."}
+                      required
+                    />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{lang === "ar" ? "التفاصيل" : "Details"}</label>
-                  <textarea 
-                    className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    placeholder={lang === "ar" ? "اشرح ما تلاحظه هنا..." : "Describe what you see..."}
-                  />
-                </div>
-                <Button className="w-full md:w-auto px-8 gap-2">
-                  <Send className="size-4" />
-                  {lang === "ar" ? "إرسال البلاغ الآن" : "Submit Report Now"}
-                </Button>
+                  <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto px-8 gap-2">
+                    <Send className={cn("size-4", isSubmitting && "animate-pulse")} />
+                    {isSubmitting 
+                      ? (lang === "ar" ? "جاري الإرسال..." : "Submitting...") 
+                      : (lang === "ar" ? "إرسال البلاغ الآن" : "Submit Report Now")}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </div>
