@@ -190,6 +190,7 @@ export default function ContentManagerPage() {
     { id: "events", label: t("Events", "الفعاليات"), icon: CalendarDays },
     { id: "traffic", label: t("Traffic", "المرور"), icon: TrafficCone },
     { id: "translations", label: t("All translations", "كل الترجمات"), icon: Languages },
+    { id: "reports", label: t("User Reports", "البلاغات الواردة"), icon: TrafficCone },
   ]
 
   return (
@@ -300,6 +301,34 @@ export default function ContentManagerPage() {
                       </div>
                     )
                   })}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === "reports" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("User Reports", "البلاغات الواردة")}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{t("Manage reports submitted by users from the dashboard.", "إدارة البلاغات التي أرسلها المستخدمون من لوحة التحكم.")}</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Placeholder for reports - in a real app, this would fetch from API */}
+                    <div className="rounded-lg border p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-bold">عائق في الطريق</h4>
+                          <p className="text-sm text-muted-foreground">ميدان المنارة، رام الله</p>
+                        </div>
+                        <Badge>Pending</Badge>
+                      </div>
+                      <p className="mt-2 text-sm">هناك بعض الحجارة التي تعيق حركة الكراسي المتحركة في الميدان.</p>
+                      <p className="mt-2 text-[10px] text-muted-foreground">2026-08-13 12:00 PM</p>
+                    </div>
+                    <p className="text-center text-sm text-muted-foreground py-8">
+                      {t("More reports will appear here as they are submitted.", "ستظهر المزيد من البلاغات هنا فور إرسالها.")}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}

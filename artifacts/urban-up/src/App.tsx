@@ -30,6 +30,7 @@ import ContentManagerPage from '@/pages/content-manager';
 import ServicesDirectoryPage from '@/pages/services-directory';
 import ReportObstaclePage from '@/pages/report-obstacle';
 import AwarenessPage from '@/pages/awareness';
+import { LoginPage } from '@/pages/Login';
 
 import { I18nProvider } from '@/lib/i18n-context';
 import { ThemeProvider } from '@/lib/theme-context';
@@ -42,24 +43,14 @@ function Router() {
     <Switch>
       <Route path="/" component={() => <Redirect to="/dashboard" />} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/traffic" component={Traffic} />
       <Route path="/safe-paths" component={SafePaths} />
-      <Route path="/eco" component={EcoRewards} />
-      <Route path="/wallet" component={WalletPage} />
       <Route path="/municipality" component={MunicipalityPage} />
-      <Route path="/store" component={StorePage} />
-      <Route path="/events/create" component={EventsCreatePage} />
-      <Route path="/events/:id" component={EventDetailPage} />
-      <Route path="/events" component={EventsPage} />
-      <Route path="/carbon" component={CarbonPage} />
-      <Route path="/tours/create" component={ToursCreatePage} />
-      <Route path="/tours" component={ToursPage} />
-      <Route path="/destination-of-month" component={DestinationOfMonthPage} />
       <Route path="/suggestions/create" component={SuggestionsCreatePage} />
       <Route path="/suggestions" component={SuggestionsPage} />
       <Route path="/complaints/create" component={ComplaintsCreatePage} />
       <Route path="/complaints" component={ComplaintsPage} />
-      <Route path="/fuel" component={FuelPage} />
       <Route path="/admin/status" component={AdminStatusPage} />
       <Route path="/admin/content" component={ContentManagerPage} />
       <Route path="/services-directory" component={ServicesDirectoryPage} />
