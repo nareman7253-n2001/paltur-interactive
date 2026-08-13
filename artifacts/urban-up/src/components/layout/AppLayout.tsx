@@ -105,7 +105,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         <main
           className={cn(
-            "flex-1 overflow-auto scroll-smooth p-4 md:p-6",
+            "flex-1 overflow-auto scroll-smooth px-6 md:px-10 lg:px-12 py-6 md:py-8",
             isRtl ? "text-right" : "text-left"
           )}
           dir={isRtl ? "rtl" : "ltr"}
