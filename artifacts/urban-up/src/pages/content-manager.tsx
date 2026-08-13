@@ -22,7 +22,9 @@ import {
   TrafficCone,
   Languages,
   Upload,
+  BarChart3,
 } from "lucide-react"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
@@ -191,6 +193,7 @@ export default function ContentManagerPage() {
     { id: "traffic", label: t("Traffic", "المرور"), icon: TrafficCone },
     { id: "translations", label: t("All translations", "كل الترجمات"), icon: Languages },
     { id: "reports", label: t("User Reports", "البلاغات الواردة"), icon: TrafficCone },
+    { id: "analytics", label: t("Analytics & Charts", "الإحصائيات والتحليلات"), icon: BarChart3 },
   ]
 
   return (
@@ -313,14 +316,13 @@ export default function ContentManagerPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {/* Placeholder for reports - in a real app, this would fetch from API */}
-                    <div className="rounded-lg border p-4">
+                    <div className="rounded-lg border p-4 bg-card">
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-bold">عائق في الطريق</h4>
                           <p className="text-sm text-muted-foreground">ميدان المنارة، رام الله</p>
                         </div>
-                        <Badge>Pending</Badge>
+                        <Badge variant="warning">Pending</Badge>
                       </div>
                       <p className="mt-2 text-sm">هناك بعض الحجارة التي تعيق حركة الكراسي المتحركة في الميدان.</p>
                       <p className="mt-2 text-[10px] text-muted-foreground">2026-08-13 12:00 PM</p>
@@ -331,6 +333,38 @@ export default function ContentManagerPage() {
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {activeSection === "analytics" && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t("Reports Analytics & Trends", "إحصائيات وتحليلات البلاغات")}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{t("Visual analysis of incoming citizen reports and traffic status.", "تحليل مرئي لبلاغات المواطنين وحالة المرور في المدينة.")}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px] w-full flex items-center justify-center bg-muted/20 rounded-xl border border-dashed p-4">
+                      <ResponsiveContainer width="1005" height="100%">
+                        <BarChart data={[
+                          { name: 'السبت', reports: 12 },
+                          { name: 'الأحد', reports: 19 },
+                          { name: 'الإثنين', reports: 15 },
+                          { name: 'الثلاثاء', reports: 22 },
+                          { name: 'الأربعاء', reports: 30 },
+                          { name: 'الخميس', reports: 25 },
+                          { name: 'الجمعة', reports: 10 },
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="reports" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             )}
 
             {activeSection === "events" && (

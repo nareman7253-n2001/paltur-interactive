@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { useContent, getLocalizedText } from "@/lib/content-context";
 import { useAuth } from "@workspace/replit-auth-web";
 import {
@@ -66,7 +67,7 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
-        alert(lang === "ar" ? "تم إرسال البلاغ بنجاح" : "Report submitted successfully");
+        toast.success(lang === "ar" ? "تم إرسال البلاغ بنجاح وتنبيه غرفة العمليات" : "Report successfully submitted and operational room alerted");
         setReportType("");
         setReportLocation("");
         setReportDetails("");
@@ -74,7 +75,7 @@ export default function Dashboard() {
         throw new Error("Failed to submit");
       }
     } catch (error) {
-      alert(lang === "ar" ? "فشل إرسال البلاغ، يرجى المحاولة لاحقاً" : "Failed to submit report, please try again later");
+      toast.error(lang === "ar" ? "فشل إرسال البلاغ، يرجى المحاولة لاحقاً" : "Failed to submit report, please try again later");
     } finally {
       setIsSubmitting(false);
     }
