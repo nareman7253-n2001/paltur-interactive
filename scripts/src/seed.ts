@@ -159,3 +159,9 @@ seed()
   .finally(async () => {
     await pool.end();
   });
+
+// Additional Admin & Role Seeding helper
+export async function seedRolesAndAdmin(dbConn: any) {
+  console.log('Seeding roles and admin user...');
+  // يمكن إضافة المستخدمين والصلاحيات هنا عند تشغيل السكربت على قاعدة بيانات الإنتاج
+}
