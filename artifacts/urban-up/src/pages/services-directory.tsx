@@ -62,32 +62,6 @@ export default function ServicesDirectoryPage() {
           </p>
         </div>
 
-        {/* Hero partnership banner */}
-        <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-5">
-          <div className={cn("flex items-start gap-4", isRtl && "flex-row-reverse")}>
-            <div className="text-4xl shrink-0">🌟</div>
-            <div>
-              <h2 className="font-bold text-lg">{t("In Partnership with Bhimitkom Association", "بالشراكة مع جمعية بهمتكم")}</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t("PalTur is proud to partner with Bhimitkom Association to make Ramallah more inclusive and accessible for all citizens.",
-                   "يفخر بالتور بالشراكة مع جمعية بهمتكم لجعل رام الله أكثر شمولًا وإتاحةً لجميع المواطنين.")}
-              </p>
-              <div className={cn("flex gap-2 mt-3 flex-wrap", isRtl && "justify-end")}>
-                <a href="https://bhimitkom.ps" target="_blank" rel="noopener noreferrer">
-                  <Button size="sm" variant="outline" className="gap-1.5 text-xs">
-                    <Globe className="size-3" />{t("Visit bhimitkom.ps", "زيارة bhimitkom.ps")}
-                  </Button>
-                </a>
-                <a href="https://www.facebook.com/bhimitkom" target="_blank" rel="noopener noreferrer">
-                  <Button size="sm" variant="outline" className="gap-1.5 text-xs">
-                    <ExternalLink className="size-3" />{t("Facebook", "فيسبوك")}
-                  </Button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Search + filters */}
         <div className={cn("flex items-center gap-3 flex-wrap", isRtl && "flex-row-reverse")}>
           <div className="relative flex-1 min-w-[200px]">

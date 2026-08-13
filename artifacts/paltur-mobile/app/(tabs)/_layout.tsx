@@ -16,7 +16,7 @@ function NativeTabLayout() {
         <Label>Home</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="events">
-        <Icon sf={{ default: 'calendar', selected: 'calendar.fill' }} />
+        <Icon sf={{ default: 'calendar', selected: 'calendar.badge.clock' }} />
         <Label>Events</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="wallet">
@@ -86,7 +86,7 @@ function ClassicTabLayout() {
           title: 'Events',
           tabBarIcon: ({ color, focused }) =>
             isIOS ? (
-              <SymbolView name={focused ? 'calendar.fill' : 'calendar'} tintColor={color} size={24} />
+              <SymbolView name={focused ? 'calendar.badge.clock' : 'calendar'} tintColor={color} size={24} />
             ) : (
               <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={22} color={color} />
             ),

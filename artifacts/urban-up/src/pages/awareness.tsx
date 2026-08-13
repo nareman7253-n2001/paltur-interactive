@@ -83,8 +83,8 @@ export default function AwarenessPage() {
             {t("Awareness & Training", "التوعية والتدريب")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {t("Free courses on disability inclusion, sign language, and accessibility — developed with Bhimitkom Association.",
-               "دورات مجانية حول الإدماج والإعاقة ولغة الإشارة وإمكانية الوصول — طُوِّرت بالتعاون مع جمعية بهمتكم.")}
+            {t("Free courses on disability inclusion, sign language, and accessibility for everyone.",
+               "دورات مجانية حول الإدماج والإعاقة ولغة الإشارة وإمكانية الوصول للجميع.")}
           </p>
         </div>
 
@@ -112,8 +112,8 @@ export default function AwarenessPage() {
                    `أكمل جميع الدورات واكسب حتى ${totalPossiblePoints} نقطة جوال!`)}
           </p>
           <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-1">
-            {t("Courses developed in partnership with Bhimitkom Association, Palestinian Vision Organization, and Deaf Palestinian Community Center.",
-               "دورات طُوِّرت بالشراكة مع جمعية بهمتكم ومنظمة الرؤية الفلسطينية ومركز مجتمع الصم الفلسطيني.")}
+            {t("Courses developed with accessibility experts and community organizations.",
+               "دورات طُوِّرت بالتعاون مع خبراء في إمكانية الوصول ومنظمات مجتمعية.")}
           </p>
         </div>
 

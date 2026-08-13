@@ -22,17 +22,29 @@ import {
   Heart,
   BookOpen,
   TriangleAlert,
-  Store,
+  PanelLeftClose,
+  PanelRightClose,
+  Settings2,
 } from "lucide-react"
 import { useGetProfile } from "@workspace/api-client-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useI18n } from "@/lib/i18n-context"
 import { useAuth } from "@workspace/replit-auth-web"
+import { useContent } from "@/lib/content-context"
 
-export function Sidebar() {
+export function Sidebar({
+  isOpen,
+  onToggle,
+  toggleLabel,
+}: {
+  isOpen: boolean
+  onToggle: () => void
+  toggleLabel: string
+}) {
   const [location] = useLocation()
   const { data: profile } = useGetProfile()
   const { t, isRtl, lang } = useI18n()
+  const { content } = useContent()
   const { isAuthenticated, user, login, logout, isLoading: authLoading } = useAuth()
 
   const cityControlLinks = [
@@ -62,12 +74,11 @@ export function Sidebar() {
     { href: "/services-directory", label: lang === "ar" ? "دليل الخدمات"    : "Services Directory", icon: Heart         },
     { href: "/report-obstacle",    label: lang === "ar" ? "أبلغ عن عقبة"    : "Report Obstacle",    icon: TriangleAlert },
     { href: "/awareness",          label: lang === "ar" ? "التوعية والتدريب" : "Awareness Courses",  icon: BookOpen      },
-    { href: "/bhimitkom",          label: lang === "ar" ? "جمعية بهمتكم"    : "Bhimitkom",          icon: Star          },
-    { href: "/store/bhimitkom",    label: lang === "ar" ? "متجر بهمتكم"     : "Bhimitkom Store",    icon: Store         },
   ]
 
   const adminLinks = [
-    { href: "/admin/status", label: lang === "ar" ? "لوحة الإدارة" : "Admin Status", icon: BarChart3 },
+    { href: "/admin/status",  label: lang === "ar" ? "لوحة الإدارة" : "Admin Status",       icon: BarChart3 },
+    { href: "/admin/content", label: lang === "ar" ? "إدارة المحتوى" : "Content Management", icon: Settings2 },
   ]
 
   const isActive = (href: string) =>
@@ -103,12 +114,30 @@ export function Sidebar() {
       )}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
+      {/* Sidebar toggle — attached to the outer edge of the sidebar */}
+      <button
+        onClick={onToggle}
+        className={cn(
+          "absolute top-4 z-20 flex size-9 items-center justify-center rounded-lg border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-md transition-colors hover:bg-sidebar-accent hover:text-white",
+          isRtl ? "-left-4" : "-right-4"
+        )}
+        title={toggleLabel}
+        aria-label={toggleLabel}
+      >
+        {isRtl ? <PanelRightClose className="size-5" /> : <PanelLeftClose className="size-5" />}
+      </button>
+
       {/* Logo */}
       <div className={cn("flex items-center gap-3 px-6 py-4 font-bold text-2xl tracking-tight text-white shrink-0", isRtl && "flex-row-reverse")}>
-        <div className="flex size-9 items-center justify-center rounded-xl bg-primary shrink-0">
-          <MapIcon className="size-5 text-primary-foreground" />
+
+        <div className="flex size-9 items-center justify-center overflow-hidden rounded-xl bg-primary shrink-0">
+          {content.brand.logoUrl ? (
+            <img src={content.brand.logoUrl} alt="" className="size-full object-cover" />
+          ) : (
+            <MapIcon className="size-5 text-primary-foreground" />
+          )}
         </div>
-        {t('appName')}
+        {content.brand.name[lang] || t('appName')}
       </div>
 
       {/* Scrollable nav area */}

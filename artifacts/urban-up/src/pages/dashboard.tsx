@@ -25,18 +25,42 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
+import { useContent, getLocalizedText } from "@/lib/content-context";
+import {
+  isMockMode,
+  mockActivityFeed,
+  mockDashboardSummary,
+  mockTouristEvents,
+  mockTouristSpots,
+} from "@/lib/mock-data";
 
 export default function Dashboard() {
-  const { t, isRtl } = useI18n();
+  const { t, isRtl, lang } = useI18n();
+  const { content } = useContent();
+  const dashboardContent = content.dashboard;
 
   useEffect(() => {
     setupLeaflet();
   }, []);
 
-  const { data: summary } = useGetDashboardSummary();
-  const { data: spots }   = useGetTouristSpots();
-  const { data: events }  = useGetTouristEvents();
-  const { data: feed }    = useGetActivityFeed();
+  const { data: summaryData } = useGetDashboardSummary({
+    query: { queryKey: ['/api/dashboard/summary'], enabled: !isMockMode },
+  });
+  const { data: spotsData } = useGetTouristSpots({
+    query: { queryKey: ['/api/tourist/spots'], enabled: !isMockMode },
+  });
+  const { data: eventsData } = useGetTouristEvents({
+    query: { queryKey: ['/api/tourist/events'], enabled: !isMockMode },
+  });
+  const { data: feedData } = useGetActivityFeed({
+    query: { queryKey: ['/api/dashboard/activity-feed'], enabled: !isMockMode },
+  });
+
+  // The public demo uses representative data until the production API is connected.
+  const summary = isMockMode ? mockDashboardSummary : summaryData;
+  const spots = isMockMode ? mockTouristSpots : Array.isArray(spotsData) ? spotsData : [];
+  const events = isMockMode ? mockTouristEvents : Array.isArray(eventsData) ? eventsData : [];
+  const feed = isMockMode ? mockActivityFeed : Array.isArray(feedData) ? feedData : [];
 
   const getModuleIcon = (module: string) => {
     switch (module) {
@@ -88,9 +112,10 @@ export default function Dashboard() {
     <AppLayout>
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('cityOverview')}</h1>
-          <p className="text-muted-foreground mt-1">{t('cityOverviewSub')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{getLocalizedText(dashboardContent.title, lang) || t('cityOverview')}</h1>
+          <p className="text-muted-foreground mt-1">{getLocalizedText(dashboardContent.subtitle, lang) || t('cityOverviewSub')}</p>
         </div>
+        {dashboardContent.heroImageUrl && <img src={dashboardContent.heroImageUrl} alt="" className="h-44 w-full rounded-2xl object-cover" />}
 
         {/* Stats row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -121,7 +146,7 @@ export default function Dashboard() {
             <CardHeader className="py-4 border-b">
               <CardTitle className="text-lg flex items-center gap-2">
                 <MapPin className="size-5 text-primary" />
-                {t('liveCityMap')}
+                {getLocalizedText(dashboardContent.mapTitle, lang) || t('liveCityMap')}
               </CardTitle>
             </CardHeader>
             <div className="flex-1 bg-muted relative">
@@ -177,7 +202,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="p-0 overflow-auto">
                 <div className="divide-y">
-                  {events?.slice(0, 4).map((event) => (
+                  {events.slice(0, 4).map((event) => (
                     <div key={event.id} className="p-4 hover:bg-muted/50 transition-colors">
                       <div className={cn("flex items-start justify-between gap-2 mb-1", isRtl && "flex-row-reverse")}>
                         <h4 className="font-semibold text-sm line-clamp-1">{event.name}</h4>
@@ -197,7 +222,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   ))}
-                  {(!events || events.length === 0) && (
+                  {events.length === 0 && (
                     <div className="p-8 text-center text-muted-foreground text-sm">{t('noUpcomingEvents')}</div>
                   )}
                 </div>
@@ -211,7 +236,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="p-0 overflow-auto">
                 <div className="divide-y">
-                  {feed?.map((item) => (
+                  {feed.map((item) => (
                     <div key={item.id} className={cn("p-4 flex gap-3 hover:bg-muted/50 transition-colors", isRtl && "flex-row-reverse")}>
                       <div className="mt-0.5 shrink-0 bg-muted rounded-full p-1.5">
                         {getModuleIcon(item.module)}
@@ -233,7 +258,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   ))}
-                  {(!feed || feed.length === 0) && (
+                  {feed.length === 0 && (
                     <div className="p-8 text-center text-muted-foreground text-sm">{t('noRecentActivity')}</div>
                   )}
                 </div>

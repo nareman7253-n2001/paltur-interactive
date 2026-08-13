@@ -18,10 +18,12 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
+import { useContent, getLocalizedText } from "@/lib/content-context";
 import { format } from "date-fns";
 import { Link } from "wouter";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+import { isMockMode } from "@/lib/mock-data";
 
 interface PalEvent {
   id: number;
@@ -42,6 +44,41 @@ interface PalEvent {
 }
 
 interface BookingsData { bookedEventIds: number[] }
+
+const DEMO_EVENTS: PalEvent[] = [
+  {
+    id: 1,
+    title: "Ramallah Heritage Walk", titleAr: "جولة تراثية في رام الله",
+    description: "An evening walk through heritage sites, stories, and local artisan shops.", descriptionAr: "جولة مسائية بين المواقع التراثية والحكايات والمتاجر الحرفية المحلية.",
+    category: "cultural", location: "Al-Manara Square", locationAr: "دوار المنارة",
+    lat: 31.9038, lng: 35.2042, startDate: "2026-08-20T16:30:00.000Z", endDate: "2026-08-20T18:30:00.000Z",
+    price: 0, pointsRequired: 0, pointsReward: 75, capacity: 30, booked: 18, spotsLeft: 12, status: "upcoming", createdBy: "PalTur Team",
+  },
+  {
+    id: 2,
+    title: "Community Clean-up Day", titleAr: "يوم تنظيف مجتمعي",
+    description: "Volunteer with neighbours to refresh public spaces and earn eco points.", descriptionAr: "تطوع مع الجيران لتنظيف المساحات العامة واكسب نقاطاً بيئية.",
+    category: "educational", location: "Al-Irsal Street", locationAr: "شارع الإرسال",
+    lat: 31.9101, lng: 35.2081, startDate: "2026-08-22T07:30:00.000Z", endDate: "2026-08-22T10:30:00.000Z",
+    price: 0, pointsRequired: 0, pointsReward: 120, capacity: 60, booked: 42, spotsLeft: 18, status: "upcoming", createdBy: "Ramallah Municipality",
+  },
+  {
+    id: 3,
+    title: "Palestinian Crafts Market", titleAr: "سوق الحرف الفلسطينية",
+    description: "Meet independent makers and discover handmade Palestinian products.", descriptionAr: "تعرّف إلى الحرفيين المستقلين واكتشف منتجات فلسطينية مصنوعة يدوياً.",
+    category: "entertainment", location: "Ramallah Cultural Palace", locationAr: "قصر رام الله الثقافي",
+    lat: 31.9072, lng: 35.2017, startDate: "2026-08-24T12:00:00.000Z", endDate: "2026-08-24T19:00:00.000Z",
+    price: 10, pointsRequired: 50, pointsReward: 50, capacity: 120, booked: 86, spotsLeft: 34, status: "upcoming", createdBy: "Local Makers Collective",
+  },
+  {
+    id: 4,
+    title: "Sunset Football Meetup", titleAr: "لقاء كرة قدم عند الغروب",
+    description: "A friendly community football session for all experience levels.", descriptionAr: "لقاء ودي لكرة القدم مناسب لجميع مستويات الخبرة.",
+    category: "sports", location: "Al-Bireh Sports Field", locationAr: "ملعب البيرة الرياضي",
+    lat: 31.9031, lng: 35.2168, startDate: "2026-08-26T17:00:00.000Z", endDate: "2026-08-26T19:00:00.000Z",
+    price: 0, pointsRequired: 0, pointsReward: 40, capacity: 24, booked: 20, spotsLeft: 4, status: "upcoming", createdBy: "Youth Sports Club",
+  },
+];
 
 const CATEGORY_COLORS: Record<string, string> = {
   cultural:      "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
@@ -183,16 +220,42 @@ function EventCard({
 
 export default function EventsPage() {
   const { t, isRtl, lang } = useI18n();
+  const { content } = useContent();
   const { toast } = useToast();
+  const configuredDemoEvents: PalEvent[] = DEMO_EVENTS.map((event) => {
+    const editable = content.events.items.find((item) => item.id === event.id);
+    if (!editable) return event;
+    return {
+      ...event,
+      title: editable.title.en,
+      titleAr: editable.title.ar,
+      description: editable.description.en,
+      descriptionAr: editable.description.ar,
+      location: editable.location.en,
+      locationAr: editable.location.ar,
+      category: editable.category,
+      pointsReward: editable.pointsReward,
+      pointsRequired: editable.pointsRequired,
+      price: editable.price,
+      capacity: editable.capacity,
+      booked: editable.booked,
+      spotsLeft: Math.max(0, editable.capacity - editable.booked),
+      startDate: editable.startDate,
+      endDate: editable.endDate,
+      status: editable.status,
+    };
+  });
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedEvent, setSelectedEvent] = useState<PalEvent | null>(null);
+  const [mockBookedIds, setMockBookedIds] = useState<number[]>([]);
 
-  const { data: events = [], isLoading } = useQuery<PalEvent[]>({
+  const { data: eventsData, isLoading: isEventsLoading } = useQuery<PalEvent[]>({
     queryKey: ["events", categoryFilter, statusFilter],
+    enabled: !isMockMode,
     queryFn: async () => {
       const params = new URLSearchParams();
       if (categoryFilter !== "all") params.set("category", categoryFilter);
@@ -204,6 +267,7 @@ export default function EventsPage() {
 
   const { data: bookingsData } = useQuery<BookingsData>({
     queryKey: ["my-bookings"],
+    enabled: !isMockMode,
     queryFn: async () => {
       const r = await fetch(`${BASE}/api/events/my-bookings`);
       return r.json();
@@ -212,17 +276,24 @@ export default function EventsPage() {
 
   const { data: walletData } = useQuery<{ jawwalPoints: number }>({
     queryKey: ["wallet-pts"],
+    enabled: !isMockMode,
     queryFn: async () => {
       const r = await fetch(`${BASE}/api/points/wallet`);
       return r.json();
     },
   });
 
-  const bookedIds = new Set(bookingsData?.bookedEventIds ?? []);
-  const userPoints = walletData?.jawwalPoints ?? 0;
+  const events = isMockMode ? configuredDemoEvents : Array.isArray(eventsData) ? eventsData : [];
+  const isLoading = !isMockMode && isEventsLoading;
+  const bookedIds = new Set(isMockMode ? mockBookedIds : bookingsData?.bookedEventIds ?? []);
+  const userPoints = isMockMode ? 620 : walletData?.jawwalPoints ?? 0;
 
   const bookMutation = useMutation({
     mutationFn: async (eventId: number) => {
+      if (isMockMode) {
+        const event = configuredDemoEvents.find((item) => item.id === eventId);
+        return { pointsEarned: event?.pointsReward ?? 0, newBalance: userPoints + (event?.pointsReward ?? 0) };
+      }
       const r = await fetch(`${BASE}/api/events/book`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -232,6 +303,9 @@ export default function EventsPage() {
       return r.json();
     },
     onSuccess: (data) => {
+      if (isMockMode && selectedEvent) {
+        setMockBookedIds((ids) => [...new Set([...ids, selectedEvent.id])]);
+      }
       setSelectedEvent(null);
       queryClient.invalidateQueries({ queryKey: ["my-bookings"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
@@ -270,8 +344,8 @@ export default function EventsPage() {
               <Calendar className="size-8 text-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">{t("eventsTitle")}</h1>
-              <p className="text-muted-foreground mt-1">{t("eventsSub")}</p>
+              <h1 className="text-3xl font-bold tracking-tight">{getLocalizedText(content.events.title, lang) || t("eventsTitle")}</h1>
+              <p className="text-muted-foreground mt-1">{getLocalizedText(content.events.subtitle, lang) || t("eventsSub")}</p>
             </div>
           </div>
           <div className={cn("flex items-center gap-3", isRtl && "flex-row-reverse")}>
@@ -289,6 +363,10 @@ export default function EventsPage() {
             </Link>
           </div>
         </div>
+
+        {content.events.heroImageUrl && (
+          <img src={content.events.heroImageUrl} alt="" className="h-44 w-full rounded-2xl object-cover" />
+        )}
 
         {/* Filters */}
         <Card className="p-4">

@@ -404,9 +404,6 @@ export const translations = {
   navServicesDir:        { en: 'Services Directory',           ar: 'دليل الخدمات'       },
   navReportObstacle:     { en: 'Report Obstacle',              ar: 'أبلغ عن عقبة'       },
   navAwareness:          { en: 'Awareness Courses',            ar: 'التوعية والتدريب'    },
-  navBhimitkom:          { en: 'Bhimitkom',                    ar: 'جمعية بهمتكم'       },
-  navBhimitkomStore:     { en: 'Bhimitkom Store',              ar: 'متجر بهمتكم'        },
-
   // ── Services Directory ───────────────────────────────────
   servicesDirTitle:      { en: 'Services Directory',           ar: 'دليل الخدمات'       },
   servicesDirSub:        { en: 'Organizations supporting persons with disabilities in Palestine', ar: 'منظمات تدعم ذوي الإعاقة في فلسطين' },
@@ -425,25 +422,12 @@ export const translations = {
 
   // ── Awareness ────────────────────────────────────────────
   awarenessTitle:        { en: 'Awareness & Training',         ar: 'التوعية والتدريب'    },
-  awarenessSub:          { en: 'Free courses on disability inclusion — developed with Bhimitkom', ar: 'دورات مجانية حول الإدماج — بالتعاون مع بهمتكم' },
+  awarenessSub:          { en: 'Free courses on disability inclusion, sign language, and accessibility for everyone.', ar: 'دورات مجانية حول الإدماج والإعاقة ولغة الإشارة وإمكانية الوصول للجميع.' },
   awarenessEnroll:       { en: 'Enroll Free',                  ar: 'التسجيل مجانًا'     },
   awarenessComplete:     { en: 'Mark Complete',                ar: 'إكمال'              },
   awarenessCertificate:  { en: 'Certificate Earned',           ar: 'تم الحصول على الشهادة' },
   awarenessModules:      { en: 'Modules',                      ar: 'الوحدات'            },
 
-  // ── Bhimitkom About ──────────────────────────────────────
-  bhimitkomTitle:        { en: 'Bhimitkom Association',        ar: 'جمعية بهمتكم'       },
-  bhimitkomVision:       { en: 'Our Vision',                   ar: 'رؤيتنا'             },
-  bhimitkomMission:      { en: 'Our Mission',                  ar: 'مهمتنا'             },
-  bhimitkomTeam:         { en: 'Our Team',                     ar: 'فريقنا'             },
-  bhimitkomJourney:      { en: 'Our Journey',                  ar: 'مسيرتنا'            },
-  bhimitkomLatest:       { en: 'Latest Updates',               ar: 'آخر التحديثات'      },
-
-  // ── Bhimitkom Store ──────────────────────────────────────
-  bhimitkomStoreTitle:   { en: 'Bhimitkom Store',              ar: 'متجر بهمتكم'        },
-  bhimitkomStoreSub:     { en: 'Handmade products by youth with disabilities', ar: 'منتجات يدوية من الشباب ذوي الإعاقة' },
-  bhimitkomCreatorStory: { en: 'Creator Story',                ar: 'قصة المنشئ'         },
-  bhimitkomByCreator:    { en: 'By',                           ar: 'بواسطة'             },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

@@ -4,7 +4,8 @@ import {
   useGetTrafficReports,
   useCreateTrafficReport,
   useGetSmartRoute,
-  useAcceptAlternativeRoute
+  useAcceptAlternativeRoute,
+  type RouteRequest,
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,8 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/utils";
-import type { RouteRequest } from "@workspace/api-client-react/src/generated/api.schemas";
+import { useContent, getLocalizedText } from "@/lib/content-context";
+import { isMockMode, mockTrafficReports } from "@/lib/mock-data";
 
 function MapClickHandler({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
   useMapEvents({ click(e) { onLocationSelect(e.latlng.lat, e.latlng.lng); } });
@@ -40,12 +42,16 @@ function TrophyIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function Traffic() {
-  const { t, isRtl } = useI18n();
+  const { t, isRtl, lang } = useI18n();
+  const { content } = useContent();
   const { toast } = useToast();
 
   useEffect(() => { setupLeaflet(); }, []);
 
-  const { data: reports }    = useGetTrafficReports();
+  const { data: reportsData } = useGetTrafficReports({
+    query: { queryKey: ['/api/traffic/reports'], enabled: !isMockMode },
+  });
+  const reports = isMockMode ? mockTrafficReports : Array.isArray(reportsData) ? reportsData : [];
   const createReport         = useCreateTrafficReport();
   const getRoute             = useGetSmartRoute();
   const acceptRoute          = useAcceptAlternativeRoute();
@@ -126,9 +132,10 @@ export default function Traffic() {
     <AppLayout>
       <div className="flex flex-col gap-6 h-full">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('trafficTitle')}</h1>
-          <p className="text-muted-foreground mt-1">{t('trafficSub')}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{getLocalizedText(content.traffic.title, lang) || t('trafficTitle')}</h1>
+          <p className="text-muted-foreground mt-1">{getLocalizedText(content.traffic.subtitle, lang) || t('trafficSub')}</p>
         </div>
+        {content.traffic.heroImageUrl && <img src={content.traffic.heroImageUrl} alt="" className="h-44 w-full rounded-2xl object-cover" />}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
           {/* Sidebar tools */}
@@ -280,7 +287,7 @@ export default function Traffic() {
                     <Popup>{t('selectedIncident')}</Popup>
                   </Marker>
                 )}
-                {reports?.map((report) => (
+                {reports.map((report) => (
                   <Marker key={report.id} position={[report.lat, report.lng]}>
                     <Popup className="rounded-xl">
                       <div className="p-1 -m-1">

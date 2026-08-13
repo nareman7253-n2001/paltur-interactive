@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { type Lang, type TranslationKey, t as translate } from './translations';
+import { useContent } from './content-context';
 
 interface I18nContextValue {
   lang: Lang;
@@ -21,13 +22,14 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   };
 
   const isRtl = lang === 'ar';
+  const { content } = useContent();
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', lang);
     document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
   }, [lang, isRtl]);
 
-  const t = (key: TranslationKey) => translate(key, lang);
+  const t = (key: TranslationKey) => content.translationOverrides[key]?.[lang] || translate(key, lang);
 
   return (
     <I18nContext.Provider value={{ lang, setLang, t, isRtl }}>
